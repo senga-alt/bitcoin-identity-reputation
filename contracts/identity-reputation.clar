@@ -54,3 +54,34 @@
     (ok true)
   )
 )
+
+;; Create Identity
+(define-public (create-identity (did (string-ascii 50)))
+  (let 
+    (
+      (sender tx-sender)
+      (current-block-height block-height)
+    )
+    (begin
+      ;; Check if identity already exists
+      (asserts! (is-none (map-get? identities {owner: sender})) 
+        (err ERR-IDENTITY-EXISTS))
+      
+      ;; Validate DID
+      (asserts! (> (len did) u5) 
+        (err ERR-INVALID-PARAMETERS))
+      
+      ;; Create identity
+      (map-set identities 
+        {owner: sender}
+        {
+          did: did,
+          reputation-score: u50,  ;; Starting reputation
+          created-at: current-block-height,
+          last-updated: current-block-height
+        }
+      )
+      (ok did)
+    )
+  )
+)
