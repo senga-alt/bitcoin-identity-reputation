@@ -85,3 +85,49 @@
     )
   )
 )
+
+;; Update Reputation
+(define-public (update-reputation 
+  (owner principal) 
+  (action-type (string-ascii 50))
+)
+  (let 
+    (
+      (current-identity
+        (unwrap! 
+          (map-get? identities {owner: owner}) 
+          (err ERR-IDENTITY-NOT-FOUND)
+        )
+      )
+      (action-multiplier 
+        (default-to u0 
+          (get multiplier 
+            (map-get? reputation-actions {action-type: action-type})
+          )
+        )
+      )
+      (current-score (get reputation-score current-identity))
+      (updated-score 
+        (if (< (+ current-score action-multiplier) MAX-REPUTATION-SCORE)
+            (+ current-score action-multiplier)
+            MAX-REPUTATION-SCORE
+        )
+      )
+    )
+    (begin
+      ;; Prevent unauthorized updates
+      (asserts! (is-eq tx-sender owner) 
+        (err ERR-UNAUTHORIZED))
+      
+      ;; Update identity record
+      (map-set identities 
+        {owner: owner}
+        (merge current-identity {
+          reputation-score: updated-score,
+          last-updated: block-height
+        })
+      )
+      (ok updated-score)
+    )
+  )
+)
