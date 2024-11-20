@@ -35,3 +35,22 @@
 (define-constant MAX-REPUTATION-SCORE u1000)
 (define-constant MIN-REPUTATION-SCORE u0)
 (define-constant REPUTATION-DECAY-RATE u10)  ;; 10% decay per period
+
+;; Initialization Function
+(define-public (initialize-reputation-actions)
+  (begin
+    (map-set reputation-actions 
+      {action-type: "governance-vote"} 
+      {multiplier: u5}
+    )
+    (map-set reputation-actions 
+      {action-type: "contract-fulfillment"} 
+      {multiplier: u10}
+    )
+    (map-set reputation-actions 
+      {action-type: "community-contribution"} 
+      {multiplier: u7}
+    )
+    (ok true)
+  )
+)
