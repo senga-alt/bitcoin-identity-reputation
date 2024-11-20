@@ -131,3 +131,37 @@
     )
   )
 )
+
+;; Decay Reputation Over Time
+(define-public (decay-reputation (owner principal))
+  (let 
+    (
+      (current-identity 
+        (unwrap! 
+          (map-get? identities {owner: owner}) 
+          (err ERR-IDENTITY-NOT-FOUND)
+        )
+      )
+      (current-score (get reputation-score current-identity))
+      (decay-amount 
+        (/ (* current-score REPUTATION-DECAY-RATE) u100)
+      )
+      (updated-score 
+        (if (> (- current-score decay-amount) MIN-REPUTATION-SCORE)
+            (- current-score decay-amount)
+            MIN-REPUTATION-SCORE
+        )
+      )
+    )
+    (begin
+      (map-set identities 
+        {owner: owner}
+        (merge current-identity {
+          reputation-score: updated-score,
+          last-updated: block-height
+        })
+      )
+      (ok updated-score)
+    )
+  )
+)
