@@ -165,3 +165,8 @@
     )
   )
 )
+
+;; Verify Reputation
+(define-read-only (get-reputation (owner principal))
+  (map-get? identities {owner: owner})
+)
