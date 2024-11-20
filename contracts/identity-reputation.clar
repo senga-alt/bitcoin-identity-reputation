@@ -186,3 +186,6 @@
     none
   )
 )
+
+;; Contract Initialization
+(initialize-reputation-actions)
