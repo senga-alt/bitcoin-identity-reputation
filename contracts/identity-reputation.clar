@@ -21,3 +21,12 @@
     last-updated: uint
   }
 )
+
+(define-map reputation-actions
+  {
+    action-type: (string-ascii 50)
+  }
+  {
+    multiplier: uint
+  }
+)
