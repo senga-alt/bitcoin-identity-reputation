@@ -10,3 +10,14 @@
 (define-constant ERR-IDENTITY-NOT-FOUND (err u103))
 (define-constant ERR-INSUFFICIENT-REPUTATION (err u104))
 (define-constant ERR-MAX-REPUTATION-REACHED (err u105))
+
+;; Storage Maps
+(define-map identities 
+  {owner: principal}
+  {
+    did: (string-ascii 50),  ;; Decentralized Identity
+    reputation-score: uint,
+    created-at: uint,
+    last-updated: uint
+  }
+)
