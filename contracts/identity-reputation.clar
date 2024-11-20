@@ -30,3 +30,8 @@
     multiplier: uint
   }
 )
+
+;; Constants
+(define-constant MAX-REPUTATION-SCORE u1000)
+(define-constant MIN-REPUTATION-SCORE u0)
+(define-constant REPUTATION-DECAY-RATE u10)  ;; 10% decay per period
