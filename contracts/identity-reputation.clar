@@ -170,3 +170,19 @@
 (define-read-only (get-reputation (owner principal))
   (map-get? identities {owner: owner})
 )
+
+;; External Platform Verification
+(define-read-only (verify-reputation 
+  (owner principal) 
+  (min-reputation-threshold uint)
+)
+  (match 
+    (map-get? identities {owner: owner})
+    identity 
+      (if (>= (get reputation-score identity) min-reputation-threshold)
+          (some true)
+          none
+      )
+    none
+  )
+)
