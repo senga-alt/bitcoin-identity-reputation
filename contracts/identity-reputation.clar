@@ -55,6 +55,14 @@
   )
 )
 
+;; Validate Owner
+(define-private (is-valid-owner (owner principal))
+  (and 
+    (is-some (map-get? identities {owner: owner}))
+    (is-eq owner tx-sender)
+  )
+)
+
 ;; Create Identity
 (define-public (create-identity (did (string-ascii 50)))
   (let 
@@ -88,12 +96,12 @@
 
 ;; Update Reputation
 (define-public (update-reputation 
-  (owner principal) 
   (action-type (string-ascii 50))
 )
   (let 
     (
-      (current-identity
+      (owner tx-sender)
+      (current-identity 
         (unwrap! 
           (map-get? identities {owner: owner}) 
           (err ERR-IDENTITY-NOT-FOUND)
@@ -115,10 +123,10 @@
       )
     )
     (begin
-      ;; Prevent unauthorized updates
-      (asserts! (is-eq tx-sender owner) 
-        (err ERR-UNAUTHORIZED))
-      
+      ;; Validate action type exists
+      (asserts! (is-some (map-get? reputation-actions {action-type: action-type}))
+        (err ERR-INVALID-PARAMETERS))
+
       ;; Update identity record
       (map-set identities 
         {owner: owner}
@@ -133,9 +141,10 @@
 )
 
 ;; Decay Reputation Over Time
-(define-public (decay-reputation (owner principal))
+(define-public (decay-reputation)
   (let 
     (
+      (owner tx-sender)
       (current-identity 
         (unwrap! 
           (map-get? identities {owner: owner}) 
